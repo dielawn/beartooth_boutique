@@ -8,9 +8,16 @@
 .navDiv {
   
 }
-
-.productDiv {
+.productsDiv {
+  display: flex;
   
+}
+.productCard {
+  display: flex;
+  flex-direction: column;
+  outline: solid white 1px;
+  margin: 10px;
+  padding: 15px;
 }
 
 .productImg {
