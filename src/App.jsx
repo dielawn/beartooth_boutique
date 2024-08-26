@@ -9,6 +9,8 @@ import { Invoice } from '../CreateInvoice'
 function App() {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [totalUSD, setTotalUSD] = useState(0);
+  const [totalBTC, setTotalBTC] = useState(0);
   const [currency, setCurrency] = useState('USD')
   const [orderId, setOrderId] = useState('')
 
@@ -29,8 +31,7 @@ function App() {
   const handleDesription = () => {
     let allNames = []
     const cartItems = cart.map((item) => allNames.push(item.name))
-    const order = ` Order Id: ${orderId}:
-      
+    const order = ` Order Id: ${orderId}:      
       ${allNames.join(', ')}
       Currency: ${currency} ${currency === 'USD' ? `$${total}` : `${btcTotal} btc`}`
     console.log('order', order)
@@ -82,6 +83,10 @@ const removeFromCart = (item) => {
           setTotal={setTotal}  
           orderData={orderData}
           setCurrency={setCurrency}
+          totalUSD={totalUSD}
+          setTotalUSD={setTotalUSD}
+          totalBTC={totalBTC}
+          setTotalBTC={setTotalBTC}
         />
       </div>
       <div className='productDiv'>

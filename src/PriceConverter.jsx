@@ -1,30 +1,40 @@
 import { useState, useEffect } from 'react';
 import { convertCurrency } from './utils';
 
-export const PriceConverter = ({ amount, fromCurrency, toCurrency }) => {
-  const [convertedAmount, setConvertedAmount] = useState(null);
+export const PriceConverter = ({ total, totalUSD, setTotalUSD, totalBTC, setTotalBTC, currency }) => {
 
   useEffect(() => {
     const performConversion = async () => {
       try {
-        const result = await convertCurrency(amount, fromCurrency, toCurrency);
-        setConvertedAmount(result);
+        console.log(total)
+          const btcResult = await convertCurrency(total, 'USD', 'BTC');
+          console.log(btcResult)
+          const btcTotalFormatted = btcResult.toFixed(8);
+          setTotalBTC(btcTotalFormatted);
+       
+          const usdResult = await convertCurrency(totalBTC, 'BTC', 'USD');
+          const usdTotalFormatted = usdResult.toFixed(2);
+          setTotalUSD(usdTotalFormatted);
+       
+        
       } catch (error) {
         console.error('Conversion failed:', error);
-        setConvertedAmount(null);
+        setTotalBTC(null);
+        setTotalUSD(null)
       }
     };
 
     performConversion();
-  }, [amount, fromCurrency, toCurrency]);
+  }, [total]);
 
-  if (convertedAmount === null) {
+  if (totalBTC === null || totalUSD === null) {
     return <p>Converting...</p>;
   }
 
   return (
     <>
-      {convertedAmount} 
+      {currency === 'USD' && `$${totalUSD}`} 
+      {currency === 'BTC' || 'LBTC' && `${totalBTC} btc`}
     </>
   );
 };
