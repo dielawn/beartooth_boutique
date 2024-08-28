@@ -9,7 +9,8 @@ export const ShoppingCart = ({ cart, removeFromCart, total, setTotal, orderData,
     };
 
     useEffect(() => {
-        setTotal(calcTotal())
+        const cartTotal = calcTotal()
+        setTotalUSD(cartTotal)
     }, [cart]);
 
     return (

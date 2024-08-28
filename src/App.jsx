@@ -79,7 +79,7 @@ const removeFromCart = (item) => {
           cart={cart} 
           setCart={setCart} 
           removeFromCart={removeFromCart}
-          total={total}
+          total={totalUSD}
           setTotal={setTotal}  
           orderData={orderData}
           setCurrency={setCurrency}
