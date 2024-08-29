@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { Order } from "./Order";
 import { PriceConverter } from "./PriceConverter";
 
-export const ShoppingCart = ({ cart, removeFromCart, total, setTotal, orderData, setCurrency, totalBTC, setTotalBTC, totalUSD, setTotalUSD }) => {   
+
+export const ShoppingCart = ({ cart, removeFromCart, orderData, setCurrency, totalBTC, setTotalBTC, totalUSD, setTotalUSD }) => {   
  
     const calcTotal = () => {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)
     };
 
     useEffect(() => {
-        const cartTotal = calcTotal()
-        setTotalUSD(cartTotal)
+        const cartTotal = calcTotal();
+        console.log(cartTotal)
+        setTotalUSD(cartTotal);
     }, [cart]);
 
     return (
@@ -32,9 +34,10 @@ export const ShoppingCart = ({ cart, removeFromCart, total, setTotal, orderData,
           </div>
     
           <div>
-            <h2>Total: ${total}</h2>
-            {total > 0  && <h2>Total: {<PriceConverter totalUSD={totalUSD} setTotalUSD={setTotalUSD} totalBTC={totalBTC} setTotalBTC={setTotalBTC}  total={total} />} sats</h2> }
-            {total > 0  && <Order orderData={orderData} setCurrency={setCurrency}/>}
+         
+            {totalUSD > 0  && 
+              <PriceConverter totalUSD={totalUSD} totalBTC={totalBTC} setTotalBTC={setTotalBTC} /> }
+            {totalUSD > 0  && <Order orderData={orderData} setCurrency={setCurrency}/>}
             
           </div>
         </div>

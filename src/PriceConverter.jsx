@@ -1,29 +1,36 @@
 import { useState, useEffect } from 'react';
-import { convertCurrency } from './utils';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_STRIKE_URL;
+const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
 
-export const PriceConverter = ({ total, totalUSD, setTotalUSD, totalBTC, setTotalBTC, currency }) => {
+export const PriceConverter = ({ totalUSD, totalBTC, setTotalBTC, currency }) => {
   const [rates, setRates] = useState([]);
 
 
   const getExchangeRates = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/exchange-rates`);
+      const response = await axios.get(`${apiUrl}/rates/ticker`, { 
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`, 
+        },    
+      })
       const responseData = response.data
+      console.log('Exchange rate:', responseData)
       setRates(responseData)
+          
     } catch (error) {
-        console.error('Failed to get exchange rates:', error);
-     
-      }
+        console.error('Error ', error.response?.data || error.message)
+    }
   };
 
-  useEffect(() => {
+  useEffect( () => {
     getExchangeRates();
   }, [])
 
   const rateCalculator = (amount, sourceCurrency, targetCurrency) => {
     const rate = rates.filter(element => element.sourceCurrency === sourceCurrency && element.targetCurrency === targetCurrency)
-    let  convertedAmount;
+    let  convertedAmount = null
     if (rate.length > 0) {
       convertedAmount = Number(amount) * Number(rate[0].amount);
     } else {
@@ -33,18 +40,20 @@ export const PriceConverter = ({ total, totalUSD, setTotalUSD, totalBTC, setTota
   };
 
   useEffect(() => {
-    rateCalculator(totalUSD, 'USD', 'BTC')
+    if (totalUSD > 0) {
+     const btcTotal = rateCalculator(totalUSD, 'USD', 'BTC')
+     setTotalBTC(btcTotal)
+    }
   }, [rates])
   
 
-  if (totalBTC === null || totalUSD === null) {
+  if (totalBTC === null) {
     return <p>Converting...</p>;
   }
 
   return (
     <>
-      {currency === 'USD' && `$${totalUSD}`} 
-      {currency === 'BTC' || 'LBTC' && `${totalBTC} btc`}
+      <p>{currency === 'BTC' && `${totalBTC} btc`}</p>
     </>
   );
 };

@@ -5,6 +5,10 @@ import { ShoppingCart } from './Cart'
 import { Product } from './Product'
 import { Order } from './Order'
 import { Invoice } from '../CreateInvoice'
+const apiUrl = import.meta.env.VITE_STRIKE_URL;
+const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
+
+console.log(apiKey, apiUrl)
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -17,8 +21,11 @@ function App() {
   const [invoice, setInvoice] = useState({});
   
   const [description, setDescription] = useState('');
-
-  const btcTotal = Number(total).toFixed(8)
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`, 
+};
 
   const orderData = {
     amount: total,
@@ -79,27 +86,33 @@ const removeFromCart = (item) => {
           cart={cart} 
           setCart={setCart} 
           removeFromCart={removeFromCart}
-          total={totalUSD}
+          totalUSD={totalUSD}
           setTotal={setTotal}  
           orderData={orderData}
           setCurrency={setCurrency}
-          totalUSD={totalUSD}
           setTotalUSD={setTotalUSD}
           totalBTC={totalBTC}
           setTotalBTC={setTotalBTC}
+          headers={headers}
         />
-      </div>
-      <div className='productDiv'>
-       <Product addToCart={addToCart}/>
-      </div>
-      <Invoice 
+         <Invoice 
+        apiUrl={apiUrl}
+        headers={headers}
         invoice={invoice}
         setInvoice={setInvoice}
         currency={currency} 
         setCurrency={setCurrency} 
-        total={total}
+        totalUSD={totalUSD}
+
+        totalBTC={totalBTC}
+        setTotalBTC={setTotalBTC}
         description={description}
       />
+      </div>
+      <div className='productDiv'>
+       <Product addToCart={addToCart}/>
+      </div>
+     
     </div>
   )
 }
