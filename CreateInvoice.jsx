@@ -4,21 +4,19 @@ import { v4 as uuidv4 } from 'uuid';
 const apiUrl = import.meta.env.VITE_STRIKE_URL;
 const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
 
-export const Invoice = ({ invoice, setInvoice, currency, setCurrency, totalUSD, description, totalBTC }) => {
-    const [amount, setAmount] = useState(0);
+export const Invoice = ({ setInvoiceId, currency, setCurrency, totalUSD, description, totalBTC }) => {
+    const [invoice, setInvoice] = useState(null);
 
     const currencyOptions = ['BTC', 'USD']
     
     useEffect(() => {
-        if (currency === 'BTC') {
-            setAmount(totalBTC)
-        } else {
-            setAmount(totalUSD)
-        };
-    }, [currency])
+        if (invoice !== null) {
+            setInvoiceId(invoice.invoiceId)
+        }       
+    }, [invoice]);
 
     const createInvoice = async () => {
-        if (!description || !currency || amount === 0) {
+        if (!description || !currency || totalUSD === 0 || totalBTC === 0) {
             throw new Error('Missing required parameters');
         }
         const correlationId = uuidv4();
@@ -29,7 +27,7 @@ export const Invoice = ({ invoice, setInvoice, currency, setCurrency, totalUSD, 
             description,
             amount: {
                 currency: formattedCurrency,
-                amount
+                amount: currency === 'USD' ? totalUSD : totalBTC
             }
          }
         try {

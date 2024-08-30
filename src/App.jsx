@@ -5,6 +5,7 @@ import { ShoppingCart } from './Cart'
 import { Product } from './Product'
 import { Order } from './Order'
 import { Invoice } from '../CreateInvoice'
+import { QuoteInvoice } from '../QuoteInv';
 const apiUrl = import.meta.env.VITE_STRIKE_URL;
 const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
 
@@ -15,12 +16,15 @@ function App() {
   const [total, setTotal] = useState(0);
   const [totalUSD, setTotalUSD] = useState(0);
   const [totalBTC, setTotalBTC] = useState(0);
-  const [currency, setCurrency] = useState('USD')
-  const [orderId, setOrderId] = useState('')
+  const [currency, setCurrency] = useState('USD');
 
-  const [invoice, setInvoice] = useState({});
+  const [orderId, setOrderId] = useState('');
+  const [invoiceId, setInvoiceId] = useState('');
+  const [quoteId, setQuoteId] = useState('');
   
   const [description, setDescription] = useState('');
+
+  const [lnInvoice, setLnInvoice] = useState('');
   
   const headers = {
     'Content-Type': 'application/json',
@@ -28,7 +32,7 @@ function App() {
 };
 
   const orderData = {
-    amount: total,
+    amount: currency === 'USD' ? totalUSD : totalBTC,
     currency: currency,
     externalUniqId: orderId,
     redirectUrl: 'https://beartoothboutique.com/thank-you',
@@ -98,8 +102,7 @@ const removeFromCart = (item) => {
          <Invoice 
         apiUrl={apiUrl}
         headers={headers}
-        invoice={invoice}
-        setInvoice={setInvoice}
+        setInvoiceId={setInvoiceId}
         currency={currency} 
         setCurrency={setCurrency} 
         totalUSD={totalUSD}
@@ -107,6 +110,13 @@ const removeFromCart = (item) => {
         totalBTC={totalBTC}
         setTotalBTC={setTotalBTC}
         description={description}
+      />
+      <QuoteInvoice 
+        invoiceId={invoiceId}
+        quoteId={quoteId}
+        setQuoteId={setQuoteId}
+        lnInvoice={lnInvoice}
+        setLnInvoice={setLnInvoice}
       />
       </div>
       <div className='productDiv'>
