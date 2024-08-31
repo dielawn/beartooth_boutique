@@ -5,7 +5,6 @@ const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
 
 export const QuoteInvoice = ({ invoiceId, quoteId, setQuoteId, lnInvoice, setLnInvoice }) => {
     const [quote, setQuote] = useState(null);
-    const [isExpired, setIsExpired] = useState(false);
 
     const quoteFromInvoice = async () => {
         try {
@@ -24,13 +23,14 @@ export const QuoteInvoice = ({ invoiceId, quoteId, setQuoteId, lnInvoice, setLnI
              throw error; 
          }
     };
-
+    // Create a quote from invoiceId
     useEffect(() => {
         if (invoiceId !== '') {
             quoteFromInvoice();
         }
     }, [invoiceId]);
 
+    // Set quoteId and lnInvoice
     useEffect(() => {
         if (quote !== null) {
             setQuoteId(quote.quoteId);
@@ -38,29 +38,16 @@ export const QuoteInvoice = ({ invoiceId, quoteId, setQuoteId, lnInvoice, setLnI
         }        
     }, [quote]);
 
-    const isQuoteExpired = () => {
-        const expiration = new Date(quote.expiration);
-        const currentTime = new Date();
-        const isExp = currentTime > expiration
-        setIsExpired(isExp)
-    };
-
+    // Renew quote before expiration
     useEffect(() => {
         const intervalId = setInterval(() => {
             if (quote !== null) {
-                isQuoteExpired();
+                console.log('New quote')
+                quoteFromInvoice();
             }
-        }, 58000); //Quotes expire after 57 sec
+        }, 45000); //Quotes expire after 57 sec
         return () => clearInterval(intervalId);       
     }, [quote]);
-
-    useEffect(() => {
-        if (isExpired) {
-            quoteFromInvoice();
-        }
-    }, [isExpired])
-
-    
 
     return (
         <div>

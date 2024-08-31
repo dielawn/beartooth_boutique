@@ -4,12 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { ShoppingCart } from './Cart'
 import { Product } from './Product'
 import { Order } from './Order'
-import { Invoice } from '../CreateInvoice'
-import { QuoteInvoice } from '../QuoteInv';
+import { Invoice } from './CreateInvoice'
+import { QuoteInvoice } from './QuoteInv';
+import { StrikeUser } from './StrikeProfile';
+import { SearchInvoices } from './SearchInvoice';
+
 const apiUrl = import.meta.env.VITE_STRIKE_URL;
 const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
-
-console.log(apiKey, apiUrl)
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -23,14 +24,9 @@ function App() {
   const [quoteId, setQuoteId] = useState('');
   
   const [description, setDescription] = useState('');
-
   const [lnInvoice, setLnInvoice] = useState('');
   
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${apiKey}`, 
-};
-
+  // Zaprite api order data object
   const orderData = {
     amount: currency === 'USD' ? totalUSD : totalBTC,
     currency: currency,
@@ -44,7 +40,7 @@ function App() {
     const cartItems = cart.map((item) => allNames.push(item.name))
     const order = ` Order Id: ${orderId}:      
       ${allNames.join(', ')}
-      Currency: ${currency} ${currency === 'USD' ? `$${total}` : `${btcTotal} btc`}`
+      Currency: ${currency} ${currency === 'USD' ? `$${totalUSD}` : `${totalBTC} btc`}`
     console.log('order', order)
     setDescription(order)
   };
@@ -97,11 +93,8 @@ const removeFromCart = (item) => {
           setTotalUSD={setTotalUSD}
           totalBTC={totalBTC}
           setTotalBTC={setTotalBTC}
-          headers={headers}
         />
          <Invoice 
-        apiUrl={apiUrl}
-        headers={headers}
         setInvoiceId={setInvoiceId}
         currency={currency} 
         setCurrency={setCurrency} 
@@ -119,10 +112,15 @@ const removeFromCart = (item) => {
         setLnInvoice={setLnInvoice}
       />
       </div>
+      <div>
+        <StrikeUser />
+        <SearchInvoices />
+      </div>
       <div className='productDiv'>
        <Product addToCart={addToCart}/>
       </div>
-     
+
+     {description && <p>{description}</p>}
     </div>
   )
 }

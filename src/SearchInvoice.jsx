@@ -3,13 +3,13 @@ import axios from "axios";
 const apiUrl = import.meta.env.VITE_STRIKE_URL;
 const apiKey = import.meta.env.VITE_STRIKE_API_KEY;
 
-export const SearchInvoices = ({ headers }) => {
-    const [invoiceId, setInvoiceId] = useState('');
-    const [foundInvoice, setFoundInvoice] = useState({});
+export const SearchInvoices = () => {
+    const [searchedInvId, setSearchedInvId] = useState('');
+    const [foundInvoice, setFoundInvoiceId] = useState('');
 
     const searchInvoices = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/invoices/${invoiceId}`, { 
+            const response = await axios.get(`${apiUrl}/invoices/${searchedInvId}`, { 
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${apiKey}`, 
@@ -17,7 +17,7 @@ export const SearchInvoices = ({ headers }) => {
             })
             const responseData = response.data
             console.log('Invoice:', responseData)
-            return responseData
+            setFoundInvoiceId(responseData)
                 
         } catch (error) {
             console.error('Error ', error.response?.data || error.message)
@@ -26,15 +26,26 @@ export const SearchInvoices = ({ headers }) => {
 
     return (
         <div>
-            <p>Search Invoice by id</p>
+            <p>Search by invoice id</p>
             <label>Invoice Id
                 <input 
-                    value={invoiceId}
-                    onChange={(e) => setInvoiceId(e.target.value)}
+                    value={searchedInvId}
+                    onChange={(e) => setSearchedInvId(e.target.value)}
                 />
             </label>
             <button type="button" onClick={searchInvoices}>Search</button>
-            {foundInvoice && <p>{foundInvoice.invoiceId}</p>}
+            {foundInvoice && 
+            <>
+                <p>{foundInvoice.amount.currency === 'USD' ? 
+                    `$${foundInvoice.amount.amount}` 
+                    : 
+                    `${foundInvoice.amount.amount} btc` }
+                </p>
+                <p>{foundInvoice.description}</p>
+                <p>{foundInvoice.created}</p>
+                <p>{foundInvoice.state}</p>
+            </>
+            }
         </div>
     )
-}
+};
